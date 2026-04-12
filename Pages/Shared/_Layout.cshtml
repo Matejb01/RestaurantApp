@@ -18,12 +18,21 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link" asp-page="/Customer/Menu">Meni</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link" asp-page="/Customer/Cart">🛒 Košarica</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Customer/OrderStatus">Status narudžbe</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Employee/Orders">Zaposlenici</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Admin/MenuManagement">Admin</a>
                         </li>
                     </ul>
                 </div>

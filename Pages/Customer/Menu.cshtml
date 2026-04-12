@@ -1,0 +1,73 @@
+﻿@page
+@model RestaurantApp.Pages.Customer.MenuModel
+@{
+    ViewData["Title"] = "Naš Meni";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">🍽️ Naš Meni</h1>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    <!-- Filter buttons -->
+    <div class="mb-4">
+        <a asp-page="/Customer/Menu" class="btn @(string.IsNullOrEmpty(Model.FilterVrsta) ? "btn-dark" : "btn-outline-dark")">
+            Sve
+        </a>
+        <a asp-page="/Customer/Menu" asp-route-filterVrsta="Hrana"
+               class="btn @(Model.FilterVrsta == "Hrana" ? "btn-danger" : "btn-outline-danger")">
+            🍔 Hrana
+        </a>
+        <a asp-page="/Customer/Menu" asp-route-filterVrsta="Piće"
+               class="btn @(Model.FilterVrsta == "Piće" ? "btn-primary" : "btn-outline-primary")">
+            🥤 Piće
+        </a>
+    </div>
+
+    <!-- Cart link -->
+    <div class="mb-3 text-end">
+        <a asp-page="/Customer/Cart" class="btn btn-success">
+            🛒 Košarica
+        </a>
+    </div>
+
+    <!-- Menu items grid -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var jelo in Model.Jela)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <span class="badge @(jelo.Vrsta == "Hrana" ? "bg-danger" : "bg-primary") mb-2">
+                            @jelo.Vrsta
+                        </span>
+                        <h5 class="card-title">@jelo.Naziv</h5>
+                        <p class="card-text text-muted">@jelo.Opis</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <span class="fw-bold fs-5">@jelo.Cijena.ToString("F2") €</span>
+                        <form method="post" asp-page-handler="AddToCart">
+                            <input type="hidden" name="jeloId" value="@jelo.Id" />
+                            <input type="hidden" name="naziv" value="@jelo.Naziv" />
+                            <input type="hidden" name="cijena" value="@jelo.Cijena" />
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                + Dodaj u košaricu
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
