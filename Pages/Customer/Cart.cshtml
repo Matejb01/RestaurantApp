@@ -1,0 +1,131 @@
+﻿@page
+@model RestaurantApp.Pages.Customer.CartModel
+@{
+    ViewData["Title"] = "Košarica";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">🛒 Vaša Košarica</h1>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    @if (!Model.CartItems.Any())
+    {
+        <div class="alert alert-info">
+            Košarica je prazna.
+            <a asp-page="/Customer/Menu" class="alert-link">Povratak na meni</a>
+        </div>
+    }
+    else
+    {
+        <!-- Cart items table -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Naziv</th>
+                            <th>Cijena</th>
+                            <th>Količina</th>
+                            <th>Ukupno</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <tr>
+                                <td>@item.Naziv</td>
+                                <td>@item.Cijena.ToString("F2") €</td>
+                                <td>
+                                    <form method="post" asp-page-handler="UpdateQuantity" class="d-flex align-items-center gap-2">
+                                        <input type="hidden" name="jeloId" value="@item.JeloId" />
+                                        <input type="number" name="kolicina" value="@item.Kolicina"
+                                               min="0" max="99" class="form-control form-control-sm" style="width:70px"
+                                               onchange="this.form.submit()" />
+                                    </form>
+                                </td>
+                                <td class="fw-bold">@item.Ukupno.ToString("F2") €</td>
+                                <td>
+                                    <form method="post" asp-page-handler="Remove">
+                                        <input type="hidden" name="jeloId" value="@item.JeloId" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">🗑</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-end fw-bold">Ukupno:</td>
+                            <td colspan="2" class="fw-bold fs-5">@Model.UkupnaCijena.ToString("F2") €</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Order form -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Podaci za narudžbu</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-page-handler="SubmitOrder">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Ime i prezime *</label>
+                            <input asp-for="Ime" class="form-control" placeholder="Vaše ime i prezime" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Broj telefona *</label>
+                            <input asp-for="Telefon" class="form-control" placeholder="+385..." required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="email@primjer.com" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Način preuzimanja *</label>
+                            <select asp-for="NacinPreuzimanja" class="form-select" id="nacinSelect">
+                                <option value="Dostava">🚗 Dostava na adresu</option>
+                                <option value="Preuzimanje">🏪 Preuzimanje u restoranu</option>
+                            </select>
+                        </div>
+                        <div class="col-12" id="adresaDiv">
+                            <label class="form-label">Adresa dostave *</label>
+                            <input asp-for="Adresa" class="form-control" placeholder="Ulica i broj, grad" />
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-between">
+                        <a asp-page="/Customer/Menu" class="btn btn-outline-secondary">
+                            ← Nastavi kupovinu
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            ✅ Pošalji narudžbu (@Model.UkupnaCijena.ToString("F2") €)
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Show/hide address field based on delivery method
+        const select = document.getElementById('nacinSelect');
+        const adresaDiv = document.getElementById('adresaDiv');
+
+        function toggleAdresa() {
+            adresaDiv.style.display = select.value === 'Dostava' ? 'block' : 'none';
+        }
+
+        select.addEventListener('change', toggleAdresa);
+        toggleAdresa();
+    </script>
+}

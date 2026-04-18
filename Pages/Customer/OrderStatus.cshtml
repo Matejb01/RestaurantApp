@@ -1,0 +1,141 @@
+﻿@page "{id:int?}"
+@model RestaurantApp.Pages.Customer.OrderStatusModel
+@{
+    ViewData["Title"] = "Status narudžbe";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">📦 Status narudžbe</h1>
+
+    <!-- Search form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="post" asp-page-handler="Search" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Broj narudžbe</label>
+                    <input asp-for="SearchId" type="number" class="form-control"
+                           placeholder="Unesite broj narudžbe" />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">🔍 Pretraži</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    @if (Model.Narudzba != null)
+    {
+        var narudzba = Model.Narudzba;
+
+        <!-- Status badge -->
+        var statusClass = narudzba.Status switch
+        {
+            "Zaprimljeno" => "bg-secondary",
+            "U pripremi" => "bg-warning text-dark",
+            "U dostavi" => "bg-info text-dark",
+            "Dostavljeno" => "bg-success",
+            "Odbijeno" => "bg-danger",
+            _ => "bg-secondary"
+        };
+
+        var statusIcon = narudzba.Status switch
+        {
+            "Zaprimljeno" => "📋",
+            "U pripremi" => "👨‍🍳",
+            "U dostavi" => "🚗",
+            "Dostavljeno" => "✅",
+            "Odbijeno" => "❌",
+            _ => "📋"
+        };
+
+        <div class="card mb-4 border-0 shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Narudžba #@narudzba.Id</h5>
+                <span class="badge @statusClass fs-6">@statusIcon @narudzba.Status</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><strong>Ime:</strong> @narudzba.Ime</p>
+                        <p><strong>Telefon:</strong> @narudzba.Telefon</p>
+                        <p><strong>Način preuzimanja:</strong> @narudzba.NacinPreuzimanja</p>
+                        @if (!string.IsNullOrEmpty(narudzba.Adresa))
+                        {
+                            <p><strong>Adresa:</strong> @narudzba.Adresa</p>
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Vrijeme narudžbe:</strong> @narudzba.DatumVrijeme.ToString("dd.MM.yyyy HH:mm")</p>
+                        @if (narudzba.PredvijenoVrijemeDostave.HasValue)
+                        {
+                            <p><strong>Predviđeno vrijeme dostave:</strong> @narudzba.PredvijenoVrijemeDostave min</p>
+                        }
+                        @if (!string.IsNullOrEmpty(narudzba.RazlogOdbijanja))
+                        {
+                            <p class="text-danger"><strong>Razlog odbijanja:</strong> @narudzba.RazlogOdbijanja</p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Order items -->
+                <h6 class="border-top pt-3">Naručena jela</h6>
+                <table class="table table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Jelo</th>
+                            <th>Količina</th>
+                            <th>Cijena</th>
+                            <th>Ukupno</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var stavka in narudzba.Stavke)
+                        {
+                            <tr>
+                                <td>@stavka.Jelo.Naziv</td>
+                                <td>@stavka.Kolicina</td>
+                                <td>@stavka.CijenaStavke.ToString("F2") €</td>
+                                <td>@((stavka.Kolicina * stavka.CijenaStavke).ToString("F2")) €</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-end fw-bold">Ukupno:</td>
+                            <td class="fw-bold">@narudzba.UkupnaCijena.ToString("F2") €</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Status timeline -->
+                <h6 class="border-top pt-3">Tijek narudžbe</h6>
+                <div class="d-flex gap-2 flex-wrap">
+                    @foreach (var status in new[] { "Zaprimljeno", "U pripremi", "U dostavi", "Dostavljeno" })
+                    {
+                        var isActive = narudzba.Status == status;
+                        var isPast = Array.IndexOf(new[] { "Zaprimljeno", "U pripremi", "U dostavi", "Dostavljeno" }, narudzba.Status)
+                                     >= Array.IndexOf(new[] { "Zaprimljeno", "U pripremi", "U dostavi", "Dostavljeno" }, status);
+
+                        if (narudzba.Status != "Odbijeno" || status == "Zaprimljeno")
+                        {
+                            <span class="badge @(isPast ? "bg-success" : "bg-light text-dark border") p-2">
+                                @status
+                            </span>
+                            if (status != "Dostavljeno")
+                            {
+                                <span class="text-muted">→</span>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <a asp-page="/Customer/Menu" class="btn btn-outline-primary">← Natrag na meni</a>
+    }
+</div>
