@@ -1,0 +1,134 @@
+﻿@page
+@model RestaurantApp.Pages.Employee.OrdersModel
+@{
+    ViewData["Title"] = "Upravljanje narudžbama";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📋 Narudžbe</h1>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted">Prijavljeni: <strong>@Model.ZaposlenikIme</strong></span>
+            <form method="post" asp-page-handler="Logout">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Odjava</button>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    <!-- Filter tabs -->
+    <div class="mb-4">
+        <a asp-page="/Employee/Orders" class="btn @(string.IsNullOrEmpty(Model.FilterStatus) ? "btn-dark" : "btn-outline-dark") btn-sm">
+            Aktivne
+        </a>
+        @foreach (var status in new[] { "Zaprimljeno", "U pripremi", "U dostavi", "Dostavljeno", "Odbijeno" })
+        {
+            <a asp-page="/Employee/Orders" asp-route-filterStatus="@status"
+                   class="btn btn-sm @(Model.FilterStatus == status ? "btn-primary" : "btn-outline-primary")">
+                @status
+            </a>
+        }
+    </div>
+
+    @if (!Model.Narudzbe.Any())
+    {
+        <div class="alert alert-info">Nema narudžbi za prikaz.</div>
+    }
+
+    @foreach (var narudzba in Model.Narudzbe)
+    {
+        var statusClass = narudzba.Status switch
+        {
+            "Zaprimljeno" => "border-secondary",
+            "U pripremi" => "border-warning",
+            "U dostavi" => "border-info",
+            "Dostavljeno" => "border-success",
+            "Odbijeno" => "border-danger",
+            _ => ""
+        };
+
+        <div class="card mb-3 border-2 @statusClass shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Narudžba #@narudzba.Id</strong>
+                    <span class="text-muted ms-2">@narudzba.DatumVrijeme.ToString("dd.MM.yyyy HH:mm")</span>
+                </div>
+                <span class="badge bg-secondary">@narudzba.Status</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="mb-1"><strong>@narudzba.Ime</strong></p>
+                        <p class="mb-1 text-muted">📞 @narudzba.Telefon</p>
+                        <p class="mb-1 text-muted">@narudzba.NacinPreuzimanja</p>
+                        @if (!string.IsNullOrEmpty(narudzba.Adresa))
+                        {
+                            <p class="mb-1 text-muted">📍 @narudzba.Adresa</p>
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Stavke:</strong>
+                        <ul class="list-unstyled mb-0 mt-1">
+                            @foreach (var stavka in narudzba.Stavke)
+                            {
+                                <li>@stavka.Kolicina× @stavka.Jelo.Naziv</li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <p class="fs-5 fw-bold">@narudzba.UkupnaCijena.ToString("F2") €</p>
+
+                        @if (narudzba.Status == "Zaprimljeno")
+                        {
+                            <form method="post" asp-page-handler="Confirm" class="mb-2">
+                                <input type="hidden" name="narudzbaId" value="@narudzba.Id" />
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text">Min dostave</span>
+                                    <input type="number" name="vrijemeDostave" value="30"
+                                           min="5" max="180" class="form-control" style="width:70px" />
+                                </div>
+                                <button type="submit" class="btn btn-success btn-sm w-100">✅ Potvrdi</button>
+                            </form>
+                            <form method="post" asp-page-handler="Reject">
+                                <input type="hidden" name="narudzbaId" value="@narudzba.Id" />
+                                <input type="text" name="razlog" placeholder="Razlog odbijanja"
+                                       class="form-control form-control-sm mb-1" />
+                                <button type="submit" class="btn btn-danger btn-sm w-100">❌ Odbij</button>
+                            </form>
+                        }
+
+                        @if (narudzba.Status == "U pripremi")
+                        {
+                            <form method="post" asp-page-handler="UpdateStatus">
+                                <input type="hidden" name="narudzbaId" value="@narudzba.Id" />
+                                <input type="hidden" name="noviStatus" value="U dostavi" />
+                                <button type="submit" class="btn btn-info btn-sm w-100">🚗 Označi: U dostavi</button>
+                            </form>
+                        }
+
+                        @if (narudzba.Status == "U dostavi")
+                        {
+                            <form method="post" asp-page-handler="UpdateStatus">
+                                <input type="hidden" name="narudzbaId" value="@narudzba.Id" />
+                                <input type="hidden" name="noviStatus" value="Dostavljeno" />
+                                <button type="submit" class="btn btn-success btn-sm w-100">✅ Označi: Dostavljeno</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
