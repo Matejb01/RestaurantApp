@@ -1,0 +1,142 @@
+﻿@page
+@model RestaurantApp.Pages.Admin.MenuManagementModel
+@{
+    ViewData["Title"] = "Upravljanje menijem";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>⚙️ Upravljanje menijem</h1>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted">Admin: <strong>@Model.AdminIme</strong></span>
+            <a asp-page="/Admin/Employees" class="btn btn-outline-primary btn-sm">
+                👥 Zaposlenici
+            </a>
+            <form method="post" asp-page-handler="Logout">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Odjava</button>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    <div class="row">
+        <!-- Form for add/edit -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">@(Model.FormJelo.Id == 0 ? "➕ Dodaj jelo" : "✏️ Uredi jelo")</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-page-handler="Save">
+                        <input type="hidden" asp-for="FormJelo.Id" />
+                        <div class="mb-3">
+                            <label class="form-label">Naziv *</label>
+                            <input asp-for="FormJelo.Naziv" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Opis</label>
+                            <textarea asp-for="FormJelo.Opis" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Vrsta *</label>
+                            <select asp-for="FormJelo.Vrsta" class="form-select" required>
+                                <option value="">-- Odaberi --</option>
+                                <option value="Hrana">Hrana</option>
+                                <option value="Piće">Piće</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Cijena (€) *</label>
+                            <input asp-for="FormJelo.Cijena" type="number" step="0.01"
+                                   min="0" class="form-control" required />
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input asp-for="FormJelo.Dostupno" type="checkbox" class="form-check-input" />
+                            <label class="form-check-label">Dostupno</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            @(Model.FormJelo.Id == 0 ? "Dodaj" : "Spremi izmjene")
+                        </button>
+                        @if (Model.FormJelo.Id != 0)
+                        {
+                            <a asp-page="/Admin/MenuManagement" class="btn btn-outline-secondary w-100 mt-2">
+                                Odustani
+                            </a>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu items list -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Trenutna ponuda (@Model.Jela.Count jela)</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Naziv</th>
+                                <th>Vrsta</th>
+                                <th>Cijena</th>
+                                <th>Dostupno</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var jelo in Model.Jela)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@jelo.Naziv</strong>
+                                        <br />
+                                        <small class="text-muted">@jelo.Opis</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge @(jelo.Vrsta == "Hrana" ? "bg-danger" : "bg-primary")">
+                                            @jelo.Vrsta
+                                        </span>
+                                    </td>
+                                    <td>@jelo.Cijena.ToString("F2") €</td>
+                                    <td>
+                                        @if (jelo.Dostupno)
+                                        {
+                                            <span class="badge bg-success">Da</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Ne</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-page="/Admin/MenuManagement" asp-route-editId="@jelo.Id"
+                                           class="btn btn-outline-warning btn-sm">✏️</a>
+                                        <form method="post" asp-page-handler="Delete"
+                                              style="display:inline"
+                                              onsubmit="return confirm('Obrisati @jelo.Naziv?')">
+                                            <input type="hidden" name="jeloId" value="@jelo.Id" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">🗑</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
