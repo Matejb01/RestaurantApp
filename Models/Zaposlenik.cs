@@ -8,6 +8,7 @@
         public string KorisnickoIme { get; set; } = string.Empty;
         public string Lozinka { get; set; } = string.Empty; // hashed later
         public string Uloga { get; set; } = "Zaposlenik"; // Zaposlenik / Administrator
+        public bool Aktivan { get; set; } = true;
 
         // Navigation property
         public ICollection<Narudzba> Narudzbe { get; set; } = new List<Narudzba>();
