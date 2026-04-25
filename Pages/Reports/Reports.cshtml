@@ -1,0 +1,245 @@
+﻿@page
+@model RestaurantApp.Pages.Reports.ReportsModel
+@{
+    ViewData["Title"] = "Izvješća";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📊 Izvješća</h1>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted">Admin: <strong>@Model.AdminIme</strong></span>
+            <a asp-page="/Admin/MenuManagement" class="btn btn-outline-primary btn-sm">⚙️ Admin panel</a>
+        </div>
+    </div>
+
+    <!-- Report selector tabs -->
+    <div class="mb-4">
+        @foreach (var (key, label) in new[] {
+            ("aktivne", "📋 Aktivne narudžbe"),
+            ("promet", "💰 Dnevni promet"),
+            ("popularna", "🏆 Najpopularnija jela"),
+            ("dostava", "🚗 Vrijeme dostave")
+        })
+        {
+            <a asp-page="/Reports/Reports"
+                   asp-route-activeReport="@key"
+                   asp-route-datumOd="@Model.DatumOd.ToString("yyyy-MM-dd")"
+                   asp-route-datumDo="@Model.DatumDo.ToString("yyyy-MM-dd")"
+                   class="btn @(Model.ActiveReport == key ? "btn-dark" : "btn-outline-dark") me-1">
+                @label
+            </a>
+        }
+    </div>
+
+    <!-- Date filter (hidden for aktivne) -->
+    @if (Model.ActiveReport != "aktivne")
+    {
+        <form method="get" class="card card-body mb-4 bg-light">
+            <input type="hidden" name="activeReport" value="@Model.ActiveReport" />
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Datum od</label>
+                    <input type="date" name="datumOd"
+                           value="@Model.DatumOd.ToString("yyyy-MM-dd")"
+                           class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Datum do</label>
+                    <input type="date" name="datumDo"
+                           value="@Model.DatumDo.ToString("yyyy-MM-dd")"
+                           class="form-control" />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">🔍 Prikaži</button>
+                </div>
+            </div>
+        </form>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    <!-- Report 1: Aktivne narudžbe -->
+    @if (Model.ActiveReport == "aktivne")
+    {
+        <h4>📋 Aktivne narudžbe (@Model.AktivneNarudzbe.Count)</h4>
+        @if (!Model.AktivneNarudzbe.Any())
+        {
+            <div class="alert alert-info">Nema aktivnih narudžbi.</div>
+        }
+        else
+        {
+            <table class="table table-hover shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Vrijeme</th>
+                        <th>Kupac</th>
+                        <th>Adresa</th>
+                        <th>Status</th>
+                        <th>Iznos</th>
+                        <th>Dostava (min)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var n in Model.AktivneNarudzbe)
+                    {
+                        <tr>
+                            <td>@n.Id</td>
+                            <td>@n.DatumVrijeme.ToString("dd.MM HH:mm")</td>
+                            <td>@n.Ime<br /><small class="text-muted">@n.Telefon</small></td>
+                            <td>@(string.IsNullOrEmpty(n.Adresa) ? "Preuzimanje" : n.Adresa)</td>
+                            <td><span class="badge bg-warning text-dark">@n.Status</span></td>
+                            <td>@n.UkupnaCijena.ToString("F2") €</td>
+                            <td>@(n.PredvijenoVrijemeDostave.HasValue ? $"{n.PredvijenoVrijemeDostave} min" : "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+
+    <!-- Report 2: Dnevni promet -->
+    @if (Model.ActiveReport == "promet")
+    {
+        <h4>💰 Dnevni promet</h4>
+        @if (!Model.DnevniPromet.Any())
+        {
+            <div class="alert alert-info">Nema podataka za odabrano razdoblje.</div>
+        }
+        else
+        {
+            <table class="table table-hover shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Datum</th>
+                        <th>Broj narudžbi</th>
+                        <th>Ukupni iznos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.DnevniPromet)
+                    {
+                        <tr>
+                            <td>@item.Datum.ToString("dd.MM.yyyy")</td>
+                            <td>@item.BrojNarudzbi</td>
+                            <td class="fw-bold">@item.UkupniIznos.ToString("F2") €</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <td><strong>Ukupno</strong></td>
+                        <td><strong>@Model.DnevniPromet.Sum(x => x.BrojNarudzbi)</strong></td>
+                        <td><strong>@Model.DnevniPromet.Sum(x => x.UkupniIznos).ToString("F2") €</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        }
+    }
+
+    <!-- Report 3: Popularna jela -->
+    @if (Model.ActiveReport == "popularna")
+    {
+        <h4>🏆 Najpopularnija jela</h4>
+        @if (!Model.PopularnaJela.Any())
+        {
+            <div class="alert alert-info">Nema podataka za odabrano razdoblje.</div>
+        }
+        else
+        {
+            <table class="table table-hover shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Rang</th>
+                        <th>Naziv jela</th>
+                        <th>Ukupno naručeno</th>
+                        <th>Broj narudžbi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.PopularnaJela.Count; i++)
+                    {
+                        var item = Model.PopularnaJela[i];
+                        <tr>
+                            <td>
+                                @if (i == 0)
+                                {
+                                    <span>🥇</span>
+                                }
+                                else if (i == 1)
+                                {
+
+                                    <span>🥈</span>
+                                }
+                                else if (i == 2)
+                                {
+
+                                    <span>🥉</span>
+                                }
+                                else
+                                {
+
+                                    <span>@(i + 1).</span>
+                                }
+                            </td>
+                            <td>@item.Naziv</td>
+                            <td>@item.UkupnaKolicina kom</td>
+                            <td>@item.BrojNarudzbi</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+
+    <!-- Report 4: Vrijeme dostave -->
+    @if (Model.ActiveReport == "dostava")
+    {
+        <h4>🚗 Prosječno vrijeme dostave</h4>
+        @if (Model.VrijemeDostave.BrojDostava == 0)
+        {
+            <div class="alert alert-info">Nema završenih dostava za odabrano razdoblje.</div>
+        }
+        else
+        {
+            <div class="row g-4 mt-1">
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm border-primary">
+                        <div class="card-body">
+                            <h2 class="text-primary">@Model.VrijemeDostave.BrojDostava</h2>
+                            <p class="text-muted mb-0">Ukupno dostava</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm border-success">
+                        <div class="card-body">
+                            <h2 class="text-success">@Model.VrijemeDostave.ProsjecnoVrijeme.ToString("F0") min</h2>
+                            <p class="text-muted mb-0">Prosječno vrijeme</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm border-info">
+                        <div class="card-body">
+                            <h2 class="text-info">@Model.VrijemeDostave.MinVrijeme min</h2>
+                            <p class="text-muted mb-0">Najbrža dostava</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm border-warning">
+                        <div class="card-body">
+                            <h2 class="text-warning">@Model.VrijemeDostave.MaxVrijeme min</h2>
+                            <p class="text-muted mb-0">Najsporija dostava</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
