@@ -36,9 +36,23 @@
     </div>
 
     <!-- Cart link -->
+    @{
+        var cartJson = HttpContext.Session.GetString("Cart");
+        var cartCount = 0;
+        if (cartJson != null)
+        {
+            var cartItems = System.Text.Json.JsonSerializer
+                .Deserialize<List<RestaurantApp.Models.CartItem>>(cartJson);
+            cartCount = cartItems?.Sum(c => c.Kolicina) ?? 0;
+        }
+    }
     <div class="mb-3 text-end">
         <a asp-page="/Customer/Cart" class="btn btn-success">
             🛒 Košarica
+            @if (cartCount > 0)
+            {
+                <span class="badge bg-danger ms-1">@cartCount</span>
+            }
         </a>
     </div>
 

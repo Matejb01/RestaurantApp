@@ -4,10 +4,46 @@
     ViewData["Title"] = "Dobrodošli";
 }
 
-<div class="container mt-5 text-center">
-    <h1>🍽️ Dobrodošli u naš restoran!</h1>
-    <p class="lead mt-3">Naručite svoja omiljena jela brzo i jednostavno.</p>
-    <a asp-page="/Customer/Menu" class="btn btn-danger btn-lg mt-3">
-        Pogledaj meni
-    </a>
+<div class="container">
+    <!-- Hero section -->
+    <div class="py-5 text-center">
+        <h1 class="display-4 fw-bold">🍽️ Dobrodošli!</h1>
+        <p class="lead text-muted mt-3">
+            Naručite svoja omiljena jela brzo, jednostavno i bez registracije.
+        </p>
+        <a asp-page="/Customer/Menu" class="btn btn-danger btn-lg mt-3 px-5">
+            Pogledaj meni →
+        </a>
+    </div>
+
+    <!-- Feature cards -->
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="card h-100 text-center shadow-sm border-0">
+                <div class="card-body p-4">
+                    <div class="fs-1 mb-3">📱</div>
+                    <h5>Jednostavno naručivanje</h5>
+                    <p class="text-muted">Bez registracije. Odaberite jela, unesite podatke i narudžba je gotova.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center shadow-sm border-0">
+                <div class="card-body p-4">
+                    <div class="fs-1 mb-3">🚗</div>
+                    <h5>Dostava ili preuzimanje</h5>
+                    <p class="text-muted">Odaberite dostavu na adresu ili preuzimanje u restoranu.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center shadow-sm border-0">
+                <div class="card-body p-4">
+                    <div class="fs-1 mb-3">📦</div>
+                    <h5>Pratite narudžbu</h5>
+                    <p class="text-muted">Pratite status vaše narudžbe u stvarnom vremenu.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
