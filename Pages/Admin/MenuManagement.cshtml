@@ -6,14 +6,14 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>⚙️ Upravljanje menijem</h1>
+        <h1><i class="bi bi-gear"></i> Upravljanje menijem</h1>
         <div class="d-flex align-items-center gap-3">
             <span class="text-muted">Admin: <strong>@Model.AdminIme</strong></span>
             <a asp-page="/Admin/Employees" class="btn btn-outline-primary btn-sm">
-                👥 Zaposlenici
+                <i class="bi bi-people"></i> Zaposlenici
             </a>
             <a asp-page="/Reports/Reports" class="btn btn-outline-success btn-sm">
-                📊 Izvješća
+                <i class="bi bi-bar-chart"></i> Izvješća
             </a>
             <form method="post" asp-page-handler="Logout">
                 <button type="submit" class="btn btn-outline-secondary btn-sm">Odjava</button>
@@ -38,7 +38,16 @@
         <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h5 class="mb-0">@(Model.FormJelo.Id == 0 ? "➕ Dodaj jelo" : "✏️ Uredi jelo")</h5>
+                    <h5 class="mb-0">
+                        @if (Model.FormJelo.Id == 0)
+                        {
+                            <span><i class="bi bi-plus-circle"></i> Dodaj jelo</span>
+                        }
+                        else
+                        {
+                            <span><i class="bi bi-pencil"></i> Uredi jelo</span>
+                        }
+                    </h5>
                 </div>
                 <div class="card-body">
                     <form method="post" asp-page-handler="Save">
@@ -126,12 +135,12 @@
                                     </td>
                                     <td>
                                         <a asp-page="/Admin/MenuManagement" asp-route-editId="@jelo.Id"
-                                           class="btn btn-outline-warning btn-sm">✏️</a>
+                                           class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
                                         <form method="post" asp-page-handler="Delete"
                                               style="display:inline"
                                               onsubmit="return confirm('Obrisati @jelo.Naziv?')">
                                             <input type="hidden" name="jeloId" value="@jelo.Id" />
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">🗑</button>
+                                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>

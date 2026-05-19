@@ -6,20 +6,20 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>📊 Izvješća</h1>
+        <h1><i class="bi bi-bar-chart"></i> Izvješća</h1>
         <div class="d-flex align-items-center gap-3">
             <span class="text-muted">Admin: <strong>@Model.AdminIme</strong></span>
-            <a asp-page="/Admin/MenuManagement" class="btn btn-outline-primary btn-sm">⚙️ Admin panel</a>
+            <a asp-page="/Admin/MenuManagement" class="btn btn-outline-primary btn-sm"><i class="bi bi-gear"></i> Admin panel</a>
         </div>
     </div>
 
     <!-- Report selector tabs -->
     <div class="mb-4">
-        @foreach (var (key, label) in new[] {
-            ("aktivne", "📋 Aktivne narudžbe"),
-            ("promet", "💰 Dnevni promet"),
-            ("popularna", "🏆 Najpopularnija jela"),
-            ("dostava", "🚗 Vrijeme dostave")
+        @foreach (var (key, icon, label) in new[] {
+            ("aktivne", "bi-clipboard-check", "Aktivne narudžbe"),
+            ("promet", "bi-cash-coin", "Dnevni promet"),
+            ("popularna", "bi-trophy", "Najpopularnija jela"),
+            ("dostava", "bi-truck", "Vrijeme dostave")
         })
         {
             <a asp-page="/Reports/Reports"
@@ -27,7 +27,7 @@
                    asp-route-datumOd="@Model.DatumOd.ToString("yyyy-MM-dd")"
                    asp-route-datumDo="@Model.DatumDo.ToString("yyyy-MM-dd")"
                    class="btn @(Model.ActiveReport == key ? "btn-dark" : "btn-outline-dark") me-1">
-                @label
+                <i class="bi @icon"></i> @label
             </a>
         }
     </div>
@@ -51,7 +51,7 @@
                            class="form-control" />
                 </div>
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">🔍 Prikaži</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Prikaži</button>
                 </div>
             </div>
         </form>
@@ -65,7 +65,7 @@
     <!-- Report 1: Aktivne narudžbe -->
     @if (Model.ActiveReport == "aktivne")
     {
-        <h4>📋 Aktivne narudžbe (@Model.AktivneNarudzbe.Count)</h4>
+        <h4><i class="bi bi-clipboard-check"></i> Aktivne narudžbe (@Model.AktivneNarudzbe.Count)</h4>
         @if (!Model.AktivneNarudzbe.Any())
         {
             <div class="alert alert-info">Nema aktivnih narudžbi.</div>
@@ -105,7 +105,7 @@
     <!-- Report 2: Dnevni promet -->
     @if (Model.ActiveReport == "promet")
     {
-        <h4>💰 Dnevni promet</h4>
+        <h4><i class="bi bi-cash-coin"></i> Dnevni promet</h4>
         @if (!Model.DnevniPromet.Any())
         {
             <div class="alert alert-info">Nema podataka za odabrano razdoblje.</div>
@@ -144,7 +144,7 @@
     <!-- Report 3: Popularna jela -->
     @if (Model.ActiveReport == "popularna")
     {
-        <h4>🏆 Najpopularnija jela</h4>
+        <h4><i class="bi bi-trophy"></i> Najpopularnija jela</h4>
         @if (!Model.PopularnaJela.Any())
         {
             <div class="alert alert-info">Nema podataka za odabrano razdoblje.</div>
@@ -168,21 +168,18 @@
                             <td>
                                 @if (i == 0)
                                 {
-                                    <span>🥇</span>
+                                    <i class="bi bi-trophy-fill text-warning fs-5" title="1. mjesto"></i>
                                 }
                                 else if (i == 1)
                                 {
-
-                                    <span>🥈</span>
+                                    <i class="bi bi-award-fill text-secondary fs-5" title="2. mjesto"></i>
                                 }
                                 else if (i == 2)
                                 {
-
-                                    <span>🥉</span>
+                                    <i class="bi bi-award-fill fs-5" style="color:#cd7f32" title="3. mjesto"></i>
                                 }
                                 else
                                 {
-
                                     <span>@(i + 1).</span>
                                 }
                             </td>
@@ -199,7 +196,7 @@
     <!-- Report 4: Vrijeme dostave -->
     @if (Model.ActiveReport == "dostava")
     {
-        <h4>🚗 Prosječno vrijeme dostave</h4>
+        <h4><i class="bi bi-truck"></i> Prosječno vrijeme dostave</h4>
         @if (Model.VrijemeDostave.BrojDostava == 0)
         {
             <div class="alert alert-info">Nema završenih dostava za odabrano razdoblje.</div>

@@ -6,11 +6,11 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>👥 Upravljanje zaposlenicima</h1>
+        <h1><i class="bi bi-people"></i> Upravljanje zaposlenicima</h1>
         <div class="d-flex align-items-center gap-3">
             <span class="text-muted">Admin: <strong>@Model.AdminIme</strong></span>
             <a asp-page="/Admin/MenuManagement" class="btn btn-outline-primary btn-sm">
-                🍽️ Meni
+                <i class="bi bi-shop"></i> Meni
             </a>
             <form method="post" asp-page-handler="Logout">
                 <button type="submit" class="btn btn-outline-secondary btn-sm">Odjava</button>
@@ -36,7 +36,14 @@
             <div class="card shadow-sm">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        @(Model.FormZaposlenik.Id == 0 ? "➕ Dodaj zaposlenika" : "✏️ Uredi zaposlenika")
+                        @if (Model.FormZaposlenik.Id == 0)
+                        {
+                            <span><i class="bi bi-plus-circle"></i> Dodaj zaposlenika</span>
+                        }
+                        else
+                        {
+                            <span><i class="bi bi-pencil"></i> Uredi zaposlenika</span>
+                        }
                     </h5>
                 </div>
                 <div class="card-body">
@@ -117,14 +124,14 @@
                                     </td>
                                     <td>
                                         <a asp-page="/Admin/Employees" asp-route-editId="@z.Id"
-                                           class="btn btn-outline-warning btn-sm">✏️</a>
+                                           class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
                                         @if (z.Id != Model.CurrentAdminId)
                                         {
                                             <form method="post" asp-page-handler="Delete"
                                                   style="display:inline"
                                                   onsubmit="return confirm('Obrisati @z.Ime @z.Prezime?')">
                                                 <input type="hidden" name="zaposlenikId" value="@z.Id" />
-                                                <button type="submit" class="btn btn-outline-danger btn-sm">🗑</button>
+                                                <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
                                             </form>
                                         }
                                         else

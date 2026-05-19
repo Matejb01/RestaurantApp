@@ -5,7 +5,7 @@
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4">🛒 Vaša Košarica</h1>
+    <h1 class="mb-4"><i class="bi bi-cart3"></i> Vaša Košarica</h1>
 
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
@@ -52,7 +52,7 @@
                                 <td>
                                     <form method="post" asp-page-handler="Remove">
                                         <input type="hidden" name="jeloId" value="@item.JeloId" />
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">🗑</button>
+                                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>
@@ -91,8 +91,8 @@
                         <div class="col-md-6">
                             <label class="form-label">Način preuzimanja *</label>
                             <select asp-for="NacinPreuzimanja" class="form-select" id="nacinSelect">
-                                <option value="Dostava">🚗 Dostava na adresu</option>
-                                <option value="Preuzimanje">🏪 Preuzimanje u restoranu</option>
+                                <option value="Dostava">Dostava na adresu</option>
+                                <option value="Preuzimanje">Preuzimanje u restoranu</option>
                             </select>
                         </div>
                         <div class="col-12" id="adresaDiv">
@@ -106,7 +106,7 @@
                             ← Nastavi kupovinu
                         </a>
                         <button type="submit" class="btn btn-success btn-lg">
-                            ✅ Pošalji narudžbu (@Model.UkupnaCijena.ToString("F2") €)
+                            <i class="bi bi-check-circle"></i> Pošalji narudžbu (@Model.UkupnaCijena.ToString("F2") €)
                         </button>
                     </div>
                 </form>

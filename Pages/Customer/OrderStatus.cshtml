@@ -5,7 +5,7 @@
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4">📦 Status narudžbe</h1>
+    <h1 class="mb-4"><i class="bi bi-box-seam"></i> Status narudžbe</h1>
 
     <!-- Search form -->
     <div class="card mb-4">
@@ -17,7 +17,7 @@
                            placeholder="Unesite broj narudžbe" />
                 </div>
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">🔍 Pretraži</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Pretraži</button>
                 </div>
             </form>
         </div>
@@ -45,18 +45,18 @@
 
         var statusIcon = narudzba.Status switch
         {
-            "Zaprimljeno" => "📋",
-            "U pripremi" => "👨‍🍳",
-            "U dostavi" => "🚗",
-            "Dostavljeno" => "✅",
-            "Odbijeno" => "❌",
-            _ => "📋"
+            "Zaprimljeno" => "bi-clipboard-check",
+            "U pripremi" => "bi-fire",
+            "U dostavi" => "bi-truck",
+            "Dostavljeno" => "bi-check-circle",
+            "Odbijeno" => "bi-x-circle",
+            _ => "bi-clipboard"
         };
 
         <div class="card mb-4 border-0 shadow">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Narudžba #@narudzba.Id</h5>
-                <span class="badge @statusClass fs-6">@statusIcon @narudzba.Status</span>
+                <span class="badge @statusClass fs-6"><i class="bi @statusIcon"></i> @narudzba.Status</span>
             </div>
             <div class="card-body">
                 <div class="row mb-3">

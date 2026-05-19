@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Restaurant App</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand fw-bold" asp-page="/Index">🍽️ RestaurantApp</a>
+            <a class="navbar-brand fw-bold" asp-page="/Index"><i class="bi bi-shop"></i> RestaurantApp</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -21,7 +22,7 @@
                         <a class="nav-link" asp-page="/Customer/Menu">Meni</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-page="/Customer/Cart">🛒 Košarica</a>
+                        <a class="nav-link" asp-page="/Customer/Cart"><i class="bi bi-cart3"></i> Košarica</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-page="/Customer/OrderStatus">Status narudžbe</a>

@@ -5,7 +5,7 @@
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4">🍽️ Naš Meni</h1>
+    <h1 class="mb-4"><i class="bi bi-shop"></i> Naš Meni</h1>
 
     @if (!string.IsNullOrEmpty(Model.SuccessMessage))
     {
@@ -27,11 +27,11 @@
         </a>
         <a asp-page="/Customer/Menu" asp-route-filterVrsta="Hrana"
                class="btn @(Model.FilterVrsta == "Hrana" ? "btn-danger" : "btn-outline-danger")">
-            🍔 Hrana
+            <i class="bi bi-egg-fried"></i> Hrana
         </a>
         <a asp-page="/Customer/Menu" asp-route-filterVrsta="Piće"
                class="btn @(Model.FilterVrsta == "Piće" ? "btn-primary" : "btn-outline-primary")">
-            🥤 Piće
+            <i class="bi bi-cup-straw"></i> Piće
         </a>
     </div>
 
@@ -48,7 +48,7 @@
     }
     <div class="mb-3 text-end">
         <a asp-page="/Customer/Cart" class="btn btn-success">
-            🛒 Košarica
+            <i class="bi bi-cart3"></i> Košarica
             @if (cartCount > 0)
             {
                 <span class="badge bg-danger ms-1">@cartCount</span>
