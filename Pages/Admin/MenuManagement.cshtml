@@ -50,8 +50,9 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form method="post" asp-page-handler="Save">
+                    <form method="post" asp-page-handler="Save" enctype="multipart/form-data">
                         <input type="hidden" asp-for="FormJelo.Id" />
+                        <input type="hidden" asp-for="FormJelo.SlikaUrl" />
                         <div class="mb-3">
                             <label class="form-label">Naziv *</label>
                             <input asp-for="FormJelo.Naziv" class="form-control" required />
@@ -77,6 +78,24 @@
                             <input asp-for="FormJelo.Dostupno" type="checkbox" class="form-check-input" />
                             <label class="form-check-label">Dostupno</label>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Slika (JPG / PNG, do 2 MB)</label>
+                            @if (!string.IsNullOrEmpty(Model.FormJelo.SlikaUrl))
+                            {
+                                <div class="mb-2">
+                                    <img src="@Model.FormJelo.SlikaUrl" alt="Trenutna slika"
+                                         class="img-thumbnail" style="max-height:120px" />
+                                </div>
+                            }
+                            <input type="file" name="slika" accept="image/png,image/jpeg" class="form-control" />
+                            @if (!string.IsNullOrEmpty(Model.FormJelo.SlikaUrl))
+                            {
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" name="ukloniSliku" value="true" class="form-check-input" id="ukloniSliku" />
+                                    <label class="form-check-label" for="ukloniSliku">Ukloni trenutnu sliku</label>
+                                </div>
+                            }
+                        </div>
                         <button type="submit" class="btn btn-primary w-100">
                             @(Model.FormJelo.Id == 0 ? "Dodaj" : "Spremi izmjene")
                         </button>
@@ -101,6 +120,7 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
+                                <th style="width:64px"></th>
                                 <th>Naziv</th>
                                 <th>Vrsta</th>
                                 <th>Cijena</th>
@@ -112,6 +132,20 @@
                             @foreach (var jelo in Model.Jela)
                             {
                                 <tr>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(jelo.SlikaUrl))
+                                        {
+                                            <img src="@jelo.SlikaUrl" alt="@jelo.Naziv"
+                                                 class="rounded" style="width:48px;height:48px;object-fit:cover" />
+                                        }
+                                        else
+                                        {
+                                            <div class="rounded bg-light d-flex align-items-center justify-content-center text-muted"
+                                                 style="width:48px;height:48px">
+                                                <i class="bi bi-image"></i>
+                                            </div>
+                                        }
+                                    </td>
                                     <td>
                                         <strong>@jelo.Naziv</strong>
                                         <br />

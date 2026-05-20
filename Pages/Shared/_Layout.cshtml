@@ -1,9 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.Extensions.Options.IOptions<RestaurantApp.Services.RestaurantInfo> RestInfo
+@{
+    var restaurantName = RestInfo.Value.Naziv;
+}
+<!DOCTYPE html>
 <html lang="hr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Restaurant App</title>
+    <title>@ViewData["Title"] - @restaurantName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -11,7 +15,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand fw-bold" asp-page="/Index"><i class="bi bi-shop"></i> RestaurantApp</a>
+            <a class="navbar-brand fw-bold" asp-page="/Index"><i class="bi bi-shop"></i> @restaurantName</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -38,7 +42,7 @@
 
     <footer class="bg-dark text-light py-3 mt-auto">
         <div class="container text-center">
-            <small>&copy; @DateTime.Now.Year RestaurantApp. Sva prava pridržana.</small>
+            <small>&copy; @DateTime.Now.Year @restaurantName. Sva prava pridržana.</small>
         </div>
     </footer>
 

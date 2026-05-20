@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantApp.Data;
+using RestaurantApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<RestaurantDbContext>(options =>
     options.UseSqlServer(builder.Configuration
         .GetConnectionString("RestaurantDb")));
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<RestaurantInfo>(builder.Configuration.GetSection("RestaurantInfo"));
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 // We'll register presenters here as we build them
 builder.Services.AddHttpContextAccessor();

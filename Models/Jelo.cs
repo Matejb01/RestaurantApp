@@ -8,6 +8,7 @@
         public string Vrsta { get; set; } = string.Empty;  // Hrana / Piće
         public decimal Cijena { get; set; }
         public bool Dostupno { get; set; } = true;
+        public string? SlikaUrl { get; set; }
 
         // Navigation property
         public ICollection<StavkaNarudzbe> Stavke { get; set; } = new List<StavkaNarudzbe>();
